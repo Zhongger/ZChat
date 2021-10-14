@@ -1,4 +1,4 @@
-package com.zhongger.zchat.pojo;
+package com.zhongger.zchat.entity;
 
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;

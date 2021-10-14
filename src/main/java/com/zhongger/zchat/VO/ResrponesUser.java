@@ -1,4 +1,4 @@
-package com.zhongger.zchat.entity;
+package com.zhongger.zchat.VO;
 
 import org.springframework.stereotype.Component;
 

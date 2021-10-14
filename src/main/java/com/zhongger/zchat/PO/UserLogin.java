@@ -1,4 +1,4 @@
-package com.zhongger.zchat.entity;
+package com.zhongger.zchat.PO;
 
 import lombok.Data;
 

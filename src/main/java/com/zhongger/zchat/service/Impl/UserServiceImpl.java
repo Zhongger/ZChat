@@ -1,17 +1,17 @@
 package com.zhongger.zchat.service.Impl;
 
 import com.zhongger.zchat.mapper.UserMapper;
-import com.zhongger.zchat.pojo.User;
-import com.zhongger.zchat.service.ImpUserService;
+import com.zhongger.zchat.entity.User;
+import com.zhongger.zchat.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
-@Service
+@Service ( "userService" )
 @PropertySource(value = "classpath:commonconfiguration/regular.properties")
-public class UserServiceImp implements ImpUserService {
+public class UserServiceImpl implements UserService {
     @Resource
     UserMapper userMapper;
     @Override

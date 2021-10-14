@@ -1,4 +1,4 @@
-package com.zhongger.zchat.entity;
+package com.zhongger.zchat.PO;
 
 
 import lombok.Data;
@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 
 
 @Data
-public class Userpe {
+public class UserRegister {
 
     private  String username;
 

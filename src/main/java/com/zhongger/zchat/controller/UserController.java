@@ -1,16 +1,14 @@
 package com.zhongger.zchat.controller;
 
-import com.zhongger.zchat.entity.ResrponesUser;
-import com.zhongger.zchat.entity.UserLogin;
-import com.zhongger.zchat.entity.Userpe;
-import com.zhongger.zchat.service.ImpUserService;
-import lombok.val;
+import com.zhongger.zchat.VO.ResrponesUser;
+import com.zhongger.zchat.PO.UserLogin;
+import com.zhongger.zchat.PO.UserRegister;
+import com.zhongger.zchat.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.validation.Valid;
 
 
 /**
@@ -25,7 +23,7 @@ public class UserController {
      * 注册接口
      */
     @Resource
-    ImpUserService userServiceImp;
+    UserService UserService;
     @Value("${regular.username}")
     String usernameRegular;
     @Value("${regular.password}")
@@ -33,27 +31,26 @@ public class UserController {
     @Value("${regular.phone}")
     String phoneRegular;
     @PostMapping("/register")
-    public ResrponesUser register(@Valid @RequestBody Userpe userpe){
-        System.out.print(userpe);
+    public ResrponesUser register( @RequestBody UserRegister userRegister){
         //验证用户名是否合法，必须是以字母开头，只能包含字母数字下划线和减号，4到16位
-        if(!userpe.getUsername().matches(usernameRegular)){
+        if(!userRegister.getUsername().matches(usernameRegular)){
             return new ResrponesUser(500,"Username不符合格式,注册失败",false);
         }
         //密码强度正则，密码至少包含 数字和英文，长度6-20
-        if(!userpe.getPassword().matches(passwordRegular)){
+        if(!userRegister.getPassword().matches(passwordRegular)){
             return new ResrponesUser(500,"Password不符合格式,注册失败",false);
         }
 
-        if(userpe.getPhone().matches(phoneRegular)){
+        if(userRegister.getPhone().matches(phoneRegular)){
             return new ResrponesUser(500,"Phone不符合格式,注册失败",false);
         }
-        if(userServiceImp.select(userpe.getUsername())!=null){
+        if(UserService.select(userRegister.getUsername())!=null){
             return new ResrponesUser(500,"用户名已被创建",false);
         }
-        if(userServiceImp.select(userpe.getPhone())!=null){
+        if(UserService.select(userRegister.getPhone())!=null){
             return new ResrponesUser(500,"手机号已被创建",false);
         }
-        int count=userServiceImp.add(userpe.getUsername(),userpe.getPassword(),userpe.getPhone());
+        int count=UserService.add(userRegister.getUsername(),userRegister.getPassword(),userRegister.getPhone());
 
         if(count==1){
             return new ResrponesUser(200,"注册成功",true);
@@ -66,9 +63,8 @@ public class UserController {
      */
     @PostMapping("/login")
     public ResrponesUser login(@RequestBody UserLogin userLogin){
-        System.out.print(userLogin);
+
 //        !userLogin.getUsername().matches(usernameRegular)&&
-        System.out.print(userLogin.getUsername().matches(phoneRegular));
 //        if(!userLogin.getUsername().matches(usernameRegular)&&!userLogin.getUsername().matches(phoneRegular)){
 //            return new ResrponesUser(500,"用户名格式错误，登陆失败",false);
 //            }
@@ -76,7 +72,7 @@ public class UserController {
         if(!userLogin.getPassword().matches(passwordRegular)){
             return new ResrponesUser(500,"密码错误，登陆失败",false);
         }
-        String password = userServiceImp.select(userLogin.getUsername());
+        String password = UserService.select(userLogin.getUsername());
 
         if(password.equals(userLogin.getPassword())){
             return new ResrponesUser(200,"登录成功",true);
