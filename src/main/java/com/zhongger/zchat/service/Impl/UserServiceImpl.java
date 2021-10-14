@@ -1,7 +1,7 @@
 package com.zhongger.zchat.service.Impl;
 
 import com.zhongger.zchat.mapper.UserMapper;
-import com.zhongger.zchat.entity.User;
+import com.zhongger.zchat.entity.Userforleili;
 import com.zhongger.zchat.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -16,7 +16,7 @@ public class UserServiceImpl implements UserService {
     UserMapper userMapper;
     @Override
     public int add(String username, String password, String phone) {
-        User user=new User(username,password,phone);
+        Userforleili user=new Userforleili(username,password,phone);
 
 //        SqlSessionFactory sqlSessionFactory ;
 //        String resource="mybatis-config1.xml";

@@ -3,7 +3,7 @@ package com.zhongger.zchat.entity;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 @Component
-public class User {
+public class Userforleili {
     private Integer userId;
 
     private String userName;
@@ -12,21 +12,21 @@ public class User {
 
     private String phone;
 
-    public User() {
+    public Userforleili() {
     }
 
-    public User(String userName, String password, String phone) {
+    public Userforleili(String userName, String password, String phone) {
         this.userName = userName;
         this.password = password;
         this.phone = phone;
     }
 
-    public User(String password, String phone) {
+    public Userforleili(String password, String phone) {
         this.password = password;
         this.phone = phone;
     }
 
-    public User(Integer userId, String userName, String password, String phone) {
+    public Userforleili(Integer userId, String userName, String password, String phone) {
         this.userId = userId;
         this.userName = userName;
         this.password = password;
