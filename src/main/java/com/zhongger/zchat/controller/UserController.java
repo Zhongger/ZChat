@@ -1,5 +1,6 @@
 package com.zhongger.zchat.controller;
 
+import com.zhongger.zchat.PO.UserDelete;
 import com.zhongger.zchat.VO.ResrponesUser;
 import com.zhongger.zchat.PO.UserLogin;
 import com.zhongger.zchat.PO.UserRegister;
@@ -21,6 +22,7 @@ public class UserController {
 
     /**
      * 注册接口
+     * 雷立 2021/10/12
      */
     @Resource
     UserService UserService;
@@ -33,7 +35,7 @@ public class UserController {
     @PostMapping("/register")
     public ResrponesUser register( @RequestBody UserRegister userRegister){
         //验证用户名是否合法，必须是以字母开头，只能包含字母数字下划线和减号，4到16位
-        if(!userRegister.getUsername().matches(usernameRegular)){
+        if(!userRegister.getUserName().matches(usernameRegular)){
             return new ResrponesUser(500,"Username不符合格式,注册失败",false);
         }
         //密码强度正则，密码至少包含 数字和英文，长度6-20
@@ -41,16 +43,16 @@ public class UserController {
             return new ResrponesUser(500,"Password不符合格式,注册失败",false);
         }
 
-        if(userRegister.getPhone().matches(phoneRegular)){
+        if(!userRegister.getPhone().matches(phoneRegular)){
             return new ResrponesUser(500,"Phone不符合格式,注册失败",false);
         }
-        if(UserService.select(userRegister.getUsername())!=null){
+        if(UserService.select(userRegister.getUserName())!=null){
             return new ResrponesUser(500,"用户名已被创建",false);
         }
         if(UserService.select(userRegister.getPhone())!=null){
             return new ResrponesUser(500,"手机号已被创建",false);
         }
-        int count=UserService.add(userRegister.getUsername(),userRegister.getPassword(),userRegister.getPhone());
+        int count=UserService.add(userRegister.getUserName(),userRegister.getPassword(),userRegister.getPhone());
 
         if(count==1){
             return new ResrponesUser(200,"注册成功",true);
@@ -60,6 +62,7 @@ public class UserController {
     }
     /**
      * 登录接口
+     * 雷立 2021/10/13
      */
     @PostMapping("/login")
     public ResrponesUser login(@RequestBody UserLogin userLogin){
@@ -74,10 +77,26 @@ public class UserController {
         }
         String password = UserService.select(userLogin.getUsername());
 
-        if(password.equals(userLogin.getPassword())){
+        if(password!=null&&password.equals(userLogin.getPassword())){
             return new ResrponesUser(200,"登录成功",true);
         }else {
             return  new ResrponesUser(500,"密码错误,登录失败",false);
         }
+    }
+    /**
+     * 清除用户接口
+     * 雷立 2021/10/15
+     */
+    @PostMapping("/deleteuser")
+    public ResrponesUser deletuser(@RequestBody UserDelete userDelete){
+        UserLogin userLogin=new UserLogin();
+        userLogin.setUsername(userDelete.getUsername());
+        userLogin.setPassword(userDelete.getPassword());
+       if(login(userLogin).getSuc()){
+           UserService.delete(userDelete.getUsername());
+           return  new ResrponesUser(500,"清除用户成功",true);
+       }else{
+           return  new ResrponesUser(500,"密码错误,删除失败",false);
+       }
     }
 }

@@ -17,13 +17,31 @@
     select user_id, user_name, password, phone
     from user
   </select>
-  <select id="selectForUsername" resultType="string">
+
+  <select id="select" resultType="string">
     select  password
-    from user where user_name=#{userName}
+    from user
+    <trim prefix="where" prefixOverrides="and" suffixOverrides="and">
+      <if test="userName!=null">
+        user_name=#{userName} and
+      </if>
+      <if test="phone!=null">
+        phone=#{phone} and
+      </if>
+    </trim>
   </select>
-  <select id="selectForUphone" resultType="string">
-    select  password
-    from user where phone=#{phone}
-  </select>
+
+  
+  <delete id="delete" parameterType="com.zhongger.zchat.entity.Userforleili">
+    delete from user
+    <trim prefix="where" prefixOverrides="and" suffixOverrides="and">
+        <if test="userName!=null">
+        user_name=#{userName} and
+        </if>
+        <if test="phone!=null">
+        phone=#{phone} and
+         </if>
+    </trim>
+  </delete>
 
 </mapper>

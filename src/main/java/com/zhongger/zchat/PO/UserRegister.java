@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 @Data
 public class UserRegister {
 
-    private  String username;
+    private  String userName;
 
     private  String password;
 
@@ -25,7 +25,7 @@ public class UserRegister {
     @Override
     public String toString() {
         return "Userpe{" +
-                "username='" + username + '\'' +
+                "username='" + userName + '\'' +
                 ", password='" + password + '\'' +
                 ", phone='" + phone + '\'' +
                 '}';

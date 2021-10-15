@@ -1,5 +1,6 @@
-package com.zhongger.zchat.service.Impl;
+package com.zhongger.zchat.service.impl;
 
+import com.zhongger.zchat.PO.UserDelete;
 import com.zhongger.zchat.mapper.UserMapper;
 import com.zhongger.zchat.entity.Userforleili;
 import com.zhongger.zchat.service.UserService;
@@ -39,13 +40,28 @@ public class UserServiceImpl implements UserService {
     @Override
     public String select(String username) {
         String password;
+        Userforleili userforleili=new Userforleili();
         if(username.matches(usernameRegular)){
-             password=userMapper.selectForUsername(username);
+            userforleili.setUserName(username);
+
         }else{
-             password=userMapper.selectForUphone(username);
-
+            userforleili.setPhone(username);
         }
-
+        password=userMapper.select(userforleili);
         return password;
+    }
+
+    @Override
+    public Integer delete(String username) {
+        Integer flag;
+        Userforleili userforleili=new Userforleili();
+        if(username.matches(usernameRegular)){
+            userforleili.setUserName(username);
+
+        }else{
+            userforleili.setPhone(username);
+        }
+        flag=userMapper.delete(userforleili);
+        return flag;
     }
 }

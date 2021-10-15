@@ -8,4 +8,6 @@ public interface UserService {
     int add(String username,String password,String phone);
     //登录接口
     String select(String username);
+    //删除用户接口
+    Integer delete(String username);
 }
