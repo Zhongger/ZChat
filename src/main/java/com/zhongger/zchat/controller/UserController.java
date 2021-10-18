@@ -10,6 +10,10 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 
 /**
@@ -65,7 +69,7 @@ public class UserController {
      * 雷立 2021/10/13
      */
     @PostMapping("/login")
-    public ResrponesUser login(@RequestBody UserLogin userLogin){
+    public ResrponesUser login(@RequestBody UserLogin userLogin, HttpSession session, HttpServletRequest request, HttpServletResponse response){
 
 //        !userLogin.getUsername().matches(usernameRegular)&&
 //        if(!userLogin.getUsername().matches(usernameRegular)&&!userLogin.getUsername().matches(phoneRegular)){
@@ -78,10 +82,22 @@ public class UserController {
         String password = UserService.select(userLogin.getUsername());
 
         if(password!=null&&password.equals(userLogin.getPassword())){
+            // 将登录用户信息保存到session中
+            session.setAttribute("user_session", userLogin);
+            // 保存cookie，实现自动登录
+            Cookie cookie_username = new Cookie("cookie_username", userLogin.getUsername());
+            // 设置cookie的持久化时间，30天
+            cookie_username.setMaxAge(30 * 24 * 60 * 60);
+            // 设置为当前项目下都携带这个cookie
+            cookie_username.setPath(request.getContextPath());
+            // 向客户端发送cookie
+            response.addCookie(cookie_username);
+
             return new ResrponesUser(200,"登录成功",true);
         }else {
             return  new ResrponesUser(500,"密码错误,登录失败",false);
         }
+
     }
     /**
      * 清除用户接口
@@ -89,14 +105,21 @@ public class UserController {
      */
     @PostMapping("/deleteuser")
     public ResrponesUser deletuser(@RequestBody UserDelete userDelete){
-        UserLogin userLogin=new UserLogin();
-        userLogin.setUsername(userDelete.getUsername());
-        userLogin.setPassword(userDelete.getPassword());
-       if(login(userLogin).getSuc()){
+
+        String password = UserService.select(userDelete.getUsername());
+       if(password!=null&&password.equals(userDelete.getPassword())){
            UserService.delete(userDelete.getUsername());
            return  new ResrponesUser(500,"清除用户成功",true);
        }else{
            return  new ResrponesUser(500,"密码错误,删除失败",false);
        }
     }
+    /**
+     * 修改信息接口
+     * 雷立 2020/10/18
+     */
+//    @PostMapping("/revise")
+//    public ResrponesUser revise(@RequestBody UserRegister userRegister){
+//
+//    }
 }
