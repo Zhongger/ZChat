@@ -1,6 +1,7 @@
 package com.zhongger.zchat.service.impl;
 
 import com.zhongger.zchat.PO.UserDelete;
+import com.zhongger.zchat.PO.UserRevise;
 import com.zhongger.zchat.mapper.UserMapper;
 import com.zhongger.zchat.entity.Userforleili;
 import com.zhongger.zchat.service.UserService;
@@ -19,17 +20,7 @@ public class UserServiceImpl implements UserService {
     public int add(String username, String password, String phone) {
         Userforleili user=new Userforleili(username,password,phone);
 
-//        SqlSessionFactory sqlSessionFactory ;
-//        String resource="mybatis-config1.xml";
-//        InputStream inputStream=null;
-//        try {
-//            inputStream = Resources.getResourceAsStream(resource);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        sqlSessionFactory=new SqlSessionFactoryBuilder().build(inputStream);
-//        SqlSession session=sqlSessionFactory.openSession();
-//        UserMapper userMapper =session.getMapper(UserMapper.class);
+
 
         int count= userMapper.insert(user);
 
@@ -64,4 +55,11 @@ public class UserServiceImpl implements UserService {
         flag=userMapper.delete(userforleili);
         return flag;
     }
+
+    @Override
+    public Integer update(UserRevise userRevise) {
+       Integer count =userMapper.update(userRevise);
+       return count;
+    }
+
 }

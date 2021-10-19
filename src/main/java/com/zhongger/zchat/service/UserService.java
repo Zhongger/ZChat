@@ -1,5 +1,6 @@
 package com.zhongger.zchat.service;
 
+import com.zhongger.zchat.PO.UserRevise;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -10,4 +11,5 @@ public interface UserService {
     String select(String username);
     //删除用户接口
     Integer delete(String username);
+    Integer update(UserRevise userRevise);
 }

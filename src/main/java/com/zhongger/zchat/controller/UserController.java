@@ -1,6 +1,7 @@
 package com.zhongger.zchat.controller;
 
 import com.zhongger.zchat.PO.UserDelete;
+import com.zhongger.zchat.PO.UserRevise;
 import com.zhongger.zchat.VO.ResrponesUser;
 import com.zhongger.zchat.PO.UserLogin;
 import com.zhongger.zchat.PO.UserRegister;
@@ -105,7 +106,6 @@ public class UserController {
      */
     @PostMapping("/deleteuser")
     public ResrponesUser deletuser(@RequestBody UserDelete userDelete){
-
         String password = UserService.select(userDelete.getUsername());
        if(password!=null&&password.equals(userDelete.getPassword())){
            UserService.delete(userDelete.getUsername());
@@ -118,8 +118,48 @@ public class UserController {
      * 修改信息接口
      * 雷立 2020/10/18
      */
-//    @PostMapping("/revise")
-//    public ResrponesUser revise(@RequestBody UserRegister userRegister){
-//
-//    }
+    @PostMapping("/revise")
+    public ResrponesUser revise(@RequestBody UserRevise userRevise ,HttpSession session){
+        System.out.println(userRevise.getUsername().trim()=="");
+        if(userRevise.getUsername()!=null&&userRevise.getUsername().trim()==""){
+            userRevise.setUsername(null);
+        }
+        if(userRevise.getPhone()!=null&&userRevise.getPhone().trim()==""){
+            userRevise.setPhone(null);
+        }
+        if(session.getAttribute("user_session")==null){
+            return new ResrponesUser(500,"用户未登录",false);
+        }
+//        查询是否已经存在该修改的用户名或手机号
+        if(userRevise.getUsername()!=null){
+            String password = UserService.select(userRevise.getUsername());
+            if (password!=null){
+                return new ResrponesUser(500,"该用户名已存在",false);
+            }
+        }
+        if(userRevise.getPhone()!=null){
+            String password = UserService.select(userRevise.getPhone());
+            if (password!=null){
+                return new ResrponesUser(500,"该手机号已存在",false);
+            }
+        }
+        UserLogin userLogin=(UserLogin) session.getAttribute("user_session");
+        if(userLogin.getUsername().matches(usernameRegular)){
+            userRevise.setOld_username(userLogin.getUsername());
+        }else{
+            userRevise.setOld_phone(userLogin.getUsername());
+        }
+        UserService.update(userRevise);
+        return new ResrponesUser(200,"修改信息成功",true);
+    }
+
+    /**
+     * 注销登录接口
+     * 2021/10/19
+     */
+    @PostMapping("/logout")
+    public ResrponesUser logout(HttpSession session){
+        session.invalidate();
+        return new ResrponesUser(200,"注销成功",true);
+    }
 }

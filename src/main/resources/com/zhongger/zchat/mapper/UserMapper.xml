@@ -44,4 +44,25 @@
     </trim>
   </delete>
 
+  <update id="update" parameterType="com.zhongger.zchat.PO.UserRevise">
+    update user
+<trim prefix="set" prefixOverrides="," suffixOverrides=",">
+  <if test="username!=null">
+    user_name=#{username},
+  </if>
+  <if test="password!=null">
+    password=#{password},
+  </if>
+<if test="phone!=null">
+   phone=#{phone},
+</if>
+</trim>
+    where
+    <if test="old_username!=null">
+      user_name=#{old_username}
+    </if>
+    <if test="old_phone!=null">
+      phone=#{old_phone}
+    </if>
+  </update>
 </mapper>
