@@ -15,7 +15,7 @@
   </insert>
   <select id="selectAll" resultMap="BaseResultMap">
     select user_id, user_name, password, phone
-    from user
+    from user where user_name=#{userName} or phone=#{username}
   </select>
 
   <select id="select" resultType="string">

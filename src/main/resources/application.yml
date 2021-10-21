@@ -1,5 +1,5 @@
 server:
-  port: 8899
+  port: 8898
   servlet:
     context-path: /zchat
 

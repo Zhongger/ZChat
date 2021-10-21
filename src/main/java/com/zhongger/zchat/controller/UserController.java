@@ -5,6 +5,7 @@ import com.zhongger.zchat.PO.UserRevise;
 import com.zhongger.zchat.VO.ResrponesUser;
 import com.zhongger.zchat.PO.UserLogin;
 import com.zhongger.zchat.PO.UserRegister;
+import com.zhongger.zchat.service.ContactpersonService;
 import com.zhongger.zchat.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -31,6 +32,8 @@ public class UserController {
      */
     @Resource
     UserService UserService;
+    @Resource
+    ContactpersonService contactpersonService;
     @Value("${regular.username}")
     String usernameRegular;
     @Value("${regular.password}")
@@ -108,7 +111,10 @@ public class UserController {
     public ResrponesUser deletuser(@RequestBody UserDelete userDelete){
         String password = UserService.select(userDelete.getUsername());
        if(password!=null&&password.equals(userDelete.getPassword())){
+           //先清除联系人表数据
+           contactpersonService.deleteforuserid(userDelete.getUsername());
            UserService.delete(userDelete.getUsername());
+
            return  new ResrponesUser(500,"清除用户成功",true);
        }else{
            return  new ResrponesUser(500,"密码错误,删除失败",false);

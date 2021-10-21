@@ -16,5 +16,6 @@ public interface UserMapper extends BaseMapper<Userforleili> {
     String select(Userforleili userforleili);
     Integer delete(Userforleili userforleili);
     Integer update(UserRevise userRevise);
+    Userforleili selectAll (String username);
 
 }

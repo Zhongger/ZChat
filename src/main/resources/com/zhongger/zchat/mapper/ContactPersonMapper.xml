@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhongger.zchat.mapper.ContactPersonMapper">
+    <insert id="insert" parameterType="com.zhongger.zchat.mapper.ContactPersonMapper">
+        insert  into contactperson (person_name,person_phone,user_id,create_date) values (#{person_name},#{person_phone},#{user_id},#{create_date})
+</insert>
+    <delete id="deleteforuserid" parameterType="string">
+        delete  from contactperson where user_id=(select user_id from user where user_name=#{username} or phone=#{username})
+    </delete>
+</mapper>

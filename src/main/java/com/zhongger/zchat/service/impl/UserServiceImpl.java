@@ -62,4 +62,10 @@ public class UserServiceImpl implements UserService {
        return count;
     }
 
+    @Override
+    public Userforleili selectAll(String username) {
+        Userforleili userforleili=userMapper.selectAll(username);
+        return userforleili;
+    }
+
 }

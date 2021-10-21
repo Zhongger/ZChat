@@ -1,0 +1,56 @@
+package com.zhongger.zchat.controller;
+
+import com.zhongger.zchat.PO.AddContactPerson;
+import com.zhongger.zchat.PO.UserLogin;
+import com.zhongger.zchat.VO.ResrponesUser;
+import com.zhongger.zchat.entity.Contactperson;
+import com.zhongger.zchat.entity.Userforleili;
+import com.zhongger.zchat.service.ContactpersonService;
+import com.zhongger.zchat.service.UserService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+@RestController
+public class ContactPersonController {
+    @Resource
+    com.zhongger.zchat.service.UserService UserService;
+    @Resource
+    ContactpersonService contactpersonService;
+    @Value("${regular.username}")
+    String usernameRegular;
+    @Value("${regular.password}")
+    String passwordRegular;
+    @Value("${regular.phone}")
+    String phoneRegular;
+
+    /**
+     * 增加联系人接口
+     * 雷立 2021/10/21
+     * @param addContactPerson
+     * @param session
+     * @return
+     */
+    @PostMapping("/addcontactperson")
+    public ResrponesUser addContactPerson(@RequestBody AddContactPerson addContactPerson, HttpSession session){
+        UserLogin userLogin =(UserLogin) session.getAttribute("user_session");
+        //查询当前用户的userid
+        Userforleili userforleili =UserService.selectAll(userLogin.getUsername());
+        Contactperson contactperson=new Contactperson();
+        System.out.print(addContactPerson);
+        contactperson.setPerson_name(addContactPerson.getUsername());
+        contactperson.setPerson_phone(addContactPerson.getPhone());
+        contactperson.setUser_id(userforleili.getUserId());
+
+        contactperson.setCreate_date(new Date());
+        contactpersonService.insert(contactperson);
+
+        return  new ResrponesUser(200,"添加成功",true);
+    }
+}
