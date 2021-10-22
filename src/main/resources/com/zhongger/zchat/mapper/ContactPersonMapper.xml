@@ -7,4 +7,17 @@
     <delete id="deleteforuserid" parameterType="string">
         delete  from contactperson where user_id=(select user_id from user where user_name=#{username} or phone=#{username})
     </delete>
+    <delete id="delete" parameterType="com.zhongger.zchat.DTO.ContactPersonDelete">
+        delete from contactperson where user_id=(select user_id from user where user_name=#{user_username} or phone=#{user_username}) and  person_name=#{username} and person_phone =#{phone}
+    </delete>
+    <resultMap id="select" type="com.zhongger.zchat.entity.Contactperson">
+        <result column="person_name" property="person_name"></result>
+        <result column="person_phone" property="person_phone"></result>
+        <result column="user_id" property="user_id"></result>
+        <result column="create_date" property="create_date"></result>
+        <result column="id" property="id"></result>
+    </resultMap>
+    <select id="select" resultMap="select" parameterType="com.zhongger.zchat.DTO.ContactPersonDelete">
+        select * from contactperson where user_id=(select user_id from user where user_name=#{user_username} or phone=#{user_username}) and  person_name=#{username} and person_phone =#{phone}
+    </select>
 </mapper>

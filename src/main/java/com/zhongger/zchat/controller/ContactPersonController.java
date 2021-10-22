@@ -1,6 +1,8 @@
 package com.zhongger.zchat.controller;
 
+import com.zhongger.zchat.DTO.ContactPersonDelete;
 import com.zhongger.zchat.PO.AddContactPerson;
+import com.zhongger.zchat.PO.DeleteContactPerson;
 import com.zhongger.zchat.PO.UserLogin;
 import com.zhongger.zchat.VO.ResrponesUser;
 import com.zhongger.zchat.entity.Contactperson;
@@ -40,10 +42,16 @@ public class ContactPersonController {
     @PostMapping("/addcontactperson")
     public ResrponesUser addContactPerson(@RequestBody AddContactPerson addContactPerson, HttpSession session){
         UserLogin userLogin =(UserLogin) session.getAttribute("user_session");
+        //查询当前用户是否添加了改联系人
+        ContactPersonDelete contactPersonDelete=new ContactPersonDelete(addContactPerson.getUsername(), addContactPerson.getPhone(), userLogin.getUsername());
+        Contactperson contactpersonforall=contactpersonService.select(contactPersonDelete);
+        if(contactpersonforall!=null){
+            return new ResrponesUser(500,"添加失败,改联系人已被添加",false);
+        }
+
         //查询当前用户的userid
         Userforleili userforleili =UserService.selectAll(userLogin.getUsername());
         Contactperson contactperson=new Contactperson();
-        System.out.print(addContactPerson);
         contactperson.setPerson_name(addContactPerson.getUsername());
         contactperson.setPerson_phone(addContactPerson.getPhone());
         contactperson.setUser_id(userforleili.getUserId());
@@ -53,4 +61,13 @@ public class ContactPersonController {
 
         return  new ResrponesUser(200,"添加成功",true);
     }
+    @PostMapping("/deletecontactperson")
+    public ResrponesUser deleteContactPerson(@RequestBody DeleteContactPerson deleteContactPerson,HttpSession session){
+        UserLogin userLogin=(UserLogin) session.getAttribute("user_session");
+        ContactPersonDelete contactPersonDelete =new ContactPersonDelete(deleteContactPerson.getUsername(), deleteContactPerson.getPhone(), userLogin.getUsername());
+        contactpersonService.delete(contactPersonDelete);
+        return  new ResrponesUser(200,"删除成功",true);
+
+    }
+
 }
