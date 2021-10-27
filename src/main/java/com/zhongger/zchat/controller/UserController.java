@@ -1,12 +1,17 @@
 package com.zhongger.zchat.controller;
 
+import com.zhongger.zchat.DTO.FileSave;
+import com.zhongger.zchat.DTO.UserInfoData;
+import com.zhongger.zchat.VO.UserInfo;
 import com.zhongger.zchat.PO.UserDelete;
 import com.zhongger.zchat.PO.UserRevise;
 import com.zhongger.zchat.VO.ResrponesUser;
 import com.zhongger.zchat.PO.UserLogin;
 import com.zhongger.zchat.PO.UserRegister;
+import com.zhongger.zchat.entity.Userforleili;
 import com.zhongger.zchat.service.ContactpersonService;
 import com.zhongger.zchat.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +21,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
 
 
 /**
@@ -32,6 +39,8 @@ public class UserController {
      */
     @Resource
     UserService UserService;
+    @Autowired
+    FileSave fileSave;
     @Resource
     ContactpersonService contactpersonService;
     @Value("${regular.username}")
@@ -167,5 +176,35 @@ public class UserController {
     public ResrponesUser logout(HttpSession session){
         session.invalidate();
         return new ResrponesUser(200,"注销成功",true);
+    }
+    /**
+     * 用户信息接口
+     * 2021/10/27
+     */
+    @PostMapping("/user")
+    public UserInfo user(HttpSession session) throws IOException {
+        UserLogin userLogin=(UserLogin) session.getAttribute("user_session");
+        Userforleili userforleili=new Userforleili();
+        if(userLogin.getUsername().matches(usernameRegular)){
+            userforleili.setUserName(userLogin.getUsername());
+        }else{
+            userforleili.setPhone(userLogin.getUsername());
+        }
+        UserInfoData userInfoData=UserService.selectuser(userforleili);
+
+        UserInfo userInfo=new UserInfo();
+        //如果本地有这个头像则不再重新生成文件
+        File file =new File(userInfoData.getImage_name());
+        if(file.exists()){
+            userInfo.setSrc(file.getAbsolutePath());
+        }else{
+            userInfo.setSrc(fileSave.SaveFile(userInfoData.getImage_name(), userInfoData.getData()));
+
+        }
+        userInfo.setPhone(userInfoData.getPhone());
+        userInfo.setUserName(userInfoData.getUserName());
+        userInfo.setUserId(userInfoData.getUserId());
+        return userInfo;
+
     }
 }

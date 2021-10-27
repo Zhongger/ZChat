@@ -1,5 +1,6 @@
 package com.zhongger.zchat.service;
 
+import com.zhongger.zchat.DTO.UserInfoData;
 import com.zhongger.zchat.PO.UserRevise;
 import com.zhongger.zchat.entity.Userforleili;
 import org.springframework.stereotype.Service;
@@ -15,5 +16,5 @@ public interface UserService {
     Integer update(UserRevise userRevise);
 
     Userforleili selectAll (String username);
-
+    UserInfoData selectuser (Userforleili userforleili);
 }

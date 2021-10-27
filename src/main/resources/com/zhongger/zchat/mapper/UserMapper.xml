@@ -65,4 +65,23 @@
       phone=#{old_phone}
     </if>
   </update>
+    <resultMap id="selectuse" type="com.zhongger.zchat.DTO.UserInfoData">
+        <result column="image" property="data"></result>
+        <result column="image_name" property="image_name"></result>
+        <result column="user_id" property="userId"></result>
+        <result column="user_name" property="userName"></result>
+        <result column="phone" property="phone"></result>
+
+    </resultMap>
+    <select id="selectuser" resultMap="selectuse">
+        select b.image,b.image_name,a.user_id,a.user_name,a.phone from user a,userAvatar b where a.user_id=b.user_id and
+        <trim prefixOverrides="," suffixOverrides=",">
+            <if test="userName!=null">
+                a.user_name=#{userName}
+            </if>
+            <if test="phone!=null">
+                a.phone=#{phone}
+            </if>
+        </trim>
+    </select>
 </mapper>

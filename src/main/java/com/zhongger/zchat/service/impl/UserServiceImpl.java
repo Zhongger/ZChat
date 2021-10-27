@@ -1,5 +1,6 @@
 package com.zhongger.zchat.service.impl;
 
+import com.zhongger.zchat.DTO.UserInfoData;
 import com.zhongger.zchat.PO.UserDelete;
 import com.zhongger.zchat.PO.UserRevise;
 import com.zhongger.zchat.mapper.UserMapper;
@@ -66,6 +67,11 @@ public class UserServiceImpl implements UserService {
     public Userforleili selectAll(String username) {
         Userforleili userforleili=userMapper.selectAll(username);
         return userforleili;
+    }
+
+    @Override
+    public UserInfoData selectuser(Userforleili userforleili) {
+        return userMapper.selectuser(userforleili);
     }
 
 }
