@@ -6,6 +6,7 @@
     <result column="user_name" jdbcType="VARCHAR" property="userName" />
     <result column="password" jdbcType="VARCHAR" property="password" />
     <result column="phone" jdbcType="VARCHAR" property="phone" />
+      <result column="staus" property="staus"></result>
   </resultMap>
   <insert id="insert" parameterType="com.zhongger.zchat.entity.Userforleili">
     insert into user (user_id, user_name, password, 
@@ -14,7 +15,7 @@
       #{phone,jdbcType=VARCHAR})
   </insert>
   <select id="selectAll" resultMap="BaseResultMap">
-    select user_id, user_name, password, phone
+    select user_id, user_name, password, phone,staus
     from user where user_name=#{userName} or phone=#{username}
   </select>
 

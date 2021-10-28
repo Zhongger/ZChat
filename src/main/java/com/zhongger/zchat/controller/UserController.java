@@ -14,6 +14,8 @@ import com.zhongger.zchat.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -23,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
+import java.net.HttpCookie;
 
 
 /**
@@ -41,6 +44,8 @@ public class UserController {
     UserService UserService;
     @Autowired
     FileSave fileSave;
+    @Autowired
+    StringRedisTemplate stringRedisTemplate;
     @Resource
     ContactpersonService contactpersonService;
     @Value("${regular.username}")
@@ -82,7 +87,7 @@ public class UserController {
      * 雷立 2021/10/13
      */
     @PostMapping("/login")
-    public ResrponesUser login(@RequestBody UserLogin userLogin, HttpSession session, HttpServletRequest request, HttpServletResponse response){
+    public ResrponesUser login(@RequestBody UserLogin userLogin,  HttpServletRequest request, HttpServletResponse response){
 
 //        !userLogin.getUsername().matches(usernameRegular)&&
 //        if(!userLogin.getUsername().matches(usernameRegular)&&!userLogin.getUsername().matches(phoneRegular)){
@@ -95,8 +100,9 @@ public class UserController {
         String password = UserService.select(userLogin.getUsername());
 
         if(password!=null&&password.equals(userLogin.getPassword())){
-            // 将登录用户信息保存到session中
-            session.setAttribute("user_session", userLogin);
+            // 将登录用户信息保存到redis中
+            stringRedisTemplate.opsForHash().put("user",userLogin.getUsername(),userLogin.getPassword());
+
             // 保存cookie，实现自动登录
             Cookie cookie_username = new Cookie("cookie_username", userLogin.getUsername());
             // 设置cookie的持久化时间，30天
@@ -134,7 +140,7 @@ public class UserController {
      * 雷立 2020/10/18
      */
     @PostMapping("/revise")
-    public ResrponesUser revise(@RequestBody UserRevise userRevise ,HttpSession session){
+    public ResrponesUser revise(@RequestBody UserRevise userRevise ,@CookieValue(value = "cookie_username")String usernames){
         System.out.println(userRevise.getUsername().trim()=="");
         if(userRevise.getUsername()!=null&&userRevise.getUsername().trim()==""){
             userRevise.setUsername(null);
@@ -142,9 +148,7 @@ public class UserController {
         if(userRevise.getPhone()!=null&&userRevise.getPhone().trim()==""){
             userRevise.setPhone(null);
         }
-        if(session.getAttribute("user_session")==null){
-            return new ResrponesUser(500,"用户未登录",false);
-        }
+
 //        查询是否已经存在该修改的用户名或手机号
         if(userRevise.getUsername()!=null){
             String password = UserService.select(userRevise.getUsername());
@@ -158,11 +162,11 @@ public class UserController {
                 return new ResrponesUser(500,"该手机号已存在",false);
             }
         }
-        UserLogin userLogin=(UserLogin) session.getAttribute("user_session");
-        if(userLogin.getUsername().matches(usernameRegular)){
-            userRevise.setOld_username(userLogin.getUsername());
+
+        if(usernames.matches(usernameRegular)){
+            userRevise.setOld_username(usernames);
         }else{
-            userRevise.setOld_phone(userLogin.getUsername());
+            userRevise.setOld_phone(usernames);
         }
         UserService.update(userRevise);
         return new ResrponesUser(200,"修改信息成功",true);
@@ -173,8 +177,9 @@ public class UserController {
      * 2021/10/19
      */
     @PostMapping("/logout")
-    public ResrponesUser logout(HttpSession session){
-        session.invalidate();
+    public ResrponesUser logout(@CookieValue(value = "cookie_username") String username){
+
+        stringRedisTemplate.opsForHash().delete("user",username);
         return new ResrponesUser(200,"注销成功",true);
     }
     /**
@@ -182,17 +187,24 @@ public class UserController {
      * 2021/10/27
      */
     @PostMapping("/user")
-    public UserInfo user(HttpSession session) throws IOException {
-        UserLogin userLogin=(UserLogin) session.getAttribute("user_session");
+    public UserInfo user(@CookieValue(value = "cookie_username")String usernames) throws IOException {
+
         Userforleili userforleili=new Userforleili();
-        if(userLogin.getUsername().matches(usernameRegular)){
-            userforleili.setUserName(userLogin.getUsername());
+        if(usernames.matches(usernameRegular)){
+            userforleili.setUserName(usernames);
         }else{
-            userforleili.setPhone(userLogin.getUsername());
+            userforleili.setPhone(usernames);
         }
         UserInfoData userInfoData=UserService.selectuser(userforleili);
-
         UserInfo userInfo=new UserInfo();
+        //未上传头像
+        if(userInfoData==null){
+            Userforleili info=UserService.selectAll(usernames);
+            userInfo.setPhone(info.getPhone());
+            userInfo.setUserName(info.getUserName());
+            userInfo.setUserId(info.getUserId());
+            return userInfo;
+        }
         //如果本地有这个头像则不再重新生成文件
         File file =new File(userInfoData.getImage_name());
         if(file.exists()){

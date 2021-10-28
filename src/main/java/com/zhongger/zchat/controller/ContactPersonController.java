@@ -10,6 +10,7 @@ import com.zhongger.zchat.entity.Userforleili;
 import com.zhongger.zchat.service.ContactpersonService;
 import com.zhongger.zchat.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,17 +41,17 @@ public class ContactPersonController {
      * @return
      */
     @PostMapping("/addcontactperson")
-    public ResrponesUser addContactPerson(@RequestBody AddContactPerson addContactPerson, HttpSession session){
-        UserLogin userLogin =(UserLogin) session.getAttribute("user_session");
+    public ResrponesUser addContactPerson(@RequestBody AddContactPerson addContactPerson, @CookieValue(value = "cookie_username")String usernames){
+
         //查询当前用户是否添加了改联系人
-        ContactPersonDelete contactPersonDelete=new ContactPersonDelete(addContactPerson.getUsername(), addContactPerson.getPhone(), userLogin.getUsername());
+        ContactPersonDelete contactPersonDelete=new ContactPersonDelete(addContactPerson.getUsername(), addContactPerson.getPhone(), usernames);
         Contactperson contactpersonforall=contactpersonService.select(contactPersonDelete);
         if(contactpersonforall!=null){
             return new ResrponesUser(500,"添加失败,改联系人已被添加",false);
         }
 
         //查询当前用户的userid
-        Userforleili userforleili =UserService.selectAll(userLogin.getUsername());
+        Userforleili userforleili =UserService.selectAll(usernames);
         Contactperson contactperson=new Contactperson();
         contactperson.setPerson_name(addContactPerson.getUsername());
         contactperson.setPerson_phone(addContactPerson.getPhone());
@@ -62,9 +63,9 @@ public class ContactPersonController {
         return  new ResrponesUser(200,"添加成功",true);
     }
     @PostMapping("/deletecontactperson")
-    public ResrponesUser deleteContactPerson(@RequestBody DeleteContactPerson deleteContactPerson,HttpSession session){
-        UserLogin userLogin=(UserLogin) session.getAttribute("user_session");
-        ContactPersonDelete contactPersonDelete =new ContactPersonDelete(deleteContactPerson.getUsername(), deleteContactPerson.getPhone(), userLogin.getUsername());
+    public ResrponesUser deleteContactPerson(@RequestBody DeleteContactPerson deleteContactPerson,@CookieValue(value = "cookie_username")String usernames){
+
+        ContactPersonDelete contactPersonDelete =new ContactPersonDelete(deleteContactPerson.getUsername(), deleteContactPerson.getPhone(), usernames);
         contactpersonService.delete(contactPersonDelete);
         return  new ResrponesUser(200,"删除成功",true);
 

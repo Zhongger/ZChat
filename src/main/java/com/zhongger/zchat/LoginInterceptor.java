@@ -7,6 +7,7 @@ import com.zhongger.zchat.entity.Userforleili;
 import com.zhongger.zchat.mapper.UserMapper;
 import com.zhongger.zchat.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -26,7 +27,8 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     @Autowired
     private UserService userService;
-
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         response.setContentType("application/json; charset=utf-8");
@@ -51,14 +53,11 @@ public class LoginInterceptor implements HandlerInterceptor {
             PrintWriter out = response.getWriter().append(new ResrponesUser(500,"用户未登录，请先登录",false).toString().substring(13));
             return false;
         }
-        // 获取HttpSession对象
-        HttpSession session = request.getSession();
-        // 获取我们登录后存在session中的用户信息
-        UserLogin obj = (UserLogin) session.getAttribute("user_session");
-        if (null != obj) {
+        //判断redies中是否有相关cookie
+        if (stringRedisTemplate.opsForHash().hasKey("user",cookie_username)) {
             // 根据用户登录账号获取数据库中的用户信息
             String password = userService.select(cookie_username);
-            if (password!=null&&password.equals(obj.getPassword())){
+            if (password!=null&&password.equals(stringRedisTemplate.opsForHash().get("user",cookie_username))){
                 return true;
             }else {
 

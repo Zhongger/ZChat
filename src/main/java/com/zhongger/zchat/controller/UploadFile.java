@@ -10,6 +10,7 @@ import com.zhongger.zchat.service.UserAvatarService;
 import com.zhongger.zchat.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,20 +30,30 @@ public class UploadFile {
     UserService userService;
     @Autowired
     UserAvatarService userAvatarService;
+
+    /**
+     * 上传头像接口
+     * 雷立 2021/10/27
+     */
     @PostMapping("/upload")
-    public ResrponesUser upload(@RequestBody MultipartFile file, HttpSession session) throws IOException, SQLException {
-        UserLogin userLogin=(UserLogin)session.getAttribute("user_session");
-        Integer user_id=userService.selectAll(userLogin.getUsername()).getUserId();
+    public ResrponesUser upload(@RequestBody MultipartFile file, @CookieValue(value = "cookie_username")String usernames) throws IOException, SQLException {
+
+        Integer user_id=userService.selectAll(usernames).getUserId();
         byte[] flies = file.getBytes();
         UserAvatar userAvatar=new UserAvatar();
         userAvatar.setFile(flies);
         File filepath=new File("");
-        String path=filepath.getAbsolutePath()+"\\ZChat\\src\\main\\java\\com\\zhongger\\zchat\\photo\\";
+        String path=filepath.getAbsolutePath()+"\\src\\main\\java\\com\\zhongger\\zchat\\photo\\";
         userAvatar.setImage_name(path+file.getOriginalFilename());
         userAvatar.setUser_id(user_id);
-        if(userAvatarService.select(user_id)==null){
+        UserAvatar userAvatar1=userAvatarService.select(user_id);
+        if(userAvatar1==null){
             userAvatarService.insert(userAvatar);
         }else{
+            File dele=new File( userAvatar1.getImage_name());
+            if(dele.exists()){
+                dele.delete();
+            }
             userAvatarService.updataforuser(userAvatar);
         }
 
