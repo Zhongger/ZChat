@@ -36,10 +36,13 @@ public class UploadFile {
      * 雷立 2021/10/27
      */
     @PostMapping("/upload")
-    public ResrponesUser upload(@RequestBody MultipartFile file, @CookieValue(value = "cookie_username")String usernames) throws IOException, SQLException {
+    public ResrponesUser upload(@RequestBody MultipartFile file, @CookieValue(value = "cookie_username")String usernames) throws IOException {
 
         Integer user_id=userService.selectAll(usernames).getUserId();
         byte[] flies = file.getBytes();
+        if(flies.length>=4194304){
+            return new ResrponesUser(500,"附件太大，上传失败",false);
+        }
         UserAvatar userAvatar=new UserAvatar();
         userAvatar.setFile(flies);
         File filepath=new File("");
@@ -47,15 +50,17 @@ public class UploadFile {
         userAvatar.setImage_name(path+file.getOriginalFilename());
         userAvatar.setUser_id(user_id);
         UserAvatar userAvatar1=userAvatarService.select(user_id);
-        if(userAvatar1==null){
-            userAvatarService.insert(userAvatar);
-        }else{
-            File dele=new File( userAvatar1.getImage_name());
-            if(dele.exists()){
-                dele.delete();
+
+            if(userAvatar1==null){
+                userAvatarService.insert(userAvatar);
+            }else{
+                File dele=new File( userAvatar1.getImage_name());
+                if(dele.exists()){
+                    dele.delete();
+                }
+                userAvatarService.updataforuser(userAvatar);
             }
-            userAvatarService.updataforuser(userAvatar);
-        }
+
 
         return new ResrponesUser(200,"上传成功",true);
     }

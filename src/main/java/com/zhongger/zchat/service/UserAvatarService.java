@@ -10,4 +10,5 @@ public interface UserAvatarService {
     Integer insert(UserAvatar userAvatar);
     UserAvatar select(Integer user_id);
     Integer updataforuser(UserAvatar userAvatar);
+    Integer delete(UserAvatar userAvatar);
 }

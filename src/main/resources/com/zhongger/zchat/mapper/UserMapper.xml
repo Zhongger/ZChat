@@ -85,4 +85,7 @@
             </if>
         </trim>
     </select>
+    <update id="updateforstaus" parameterType="com.zhongger.zchat.entity.Userforleili">
+        update user set staus=#{staus} where user_name=#{userName} or phone=#{userName}
+    </update>
 </mapper>

@@ -74,4 +74,9 @@ public class UserServiceImpl implements UserService {
         return userMapper.selectuser(userforleili);
     }
 
+    @Override
+    public Integer updateforstaus(Userforleili userforleili) {
+        return userMapper.updateforstaus(userforleili);
+    }
+
 }

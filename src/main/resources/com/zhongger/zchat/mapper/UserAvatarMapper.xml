@@ -14,4 +14,7 @@
     <update id="updateforuser" parameterType="com.zhongger.zchat.entity.UserAvatar">
         update userAvatar set image=#{file},image_name=#{image_name} where user_id=#{user_id}
     </update>
+    <delete id="delete" parameterType="com.zhongger.zchat.entity.UserAvatar">
+        delete from  userAvatar where user_id=#{user_id}
+    </delete>
 </mapper>

@@ -24,4 +24,9 @@ public class UserAvatarServiceImp implements UserAvatarService {
     public Integer updataforuser(UserAvatar userAvatar) {
         return userAvatarMapper.updateforuser(userAvatar);
     }
+
+    @Override
+    public Integer delete(UserAvatar userAvatar) {
+        return userAvatarMapper.delete(userAvatar);
+    }
 }

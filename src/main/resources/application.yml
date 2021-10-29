@@ -21,6 +21,10 @@ spring:
       min-idle: 10
       max-active: 100
       max-wait: 1000
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 100MB
 mybatis:
   mapper-locations: classpath:com/zhongger/zchat/mapper/*Mapper.xml
   #config-location: classpath:mybatis-config1.xml

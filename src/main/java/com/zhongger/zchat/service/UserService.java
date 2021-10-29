@@ -17,4 +17,5 @@ public interface UserService {
 
     Userforleili selectAll (String username);
     UserInfoData selectuser (Userforleili userforleili);
+    Integer updateforstaus(Userforleili userforleili);
 }

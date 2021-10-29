@@ -1,11 +1,14 @@
 package com.zhongger.zchat.service.impl;
 
 import com.zhongger.zchat.DTO.ContactPersonDelete;
+import com.zhongger.zchat.DTO.ContactPersonInfo;
 import com.zhongger.zchat.entity.Contactperson;
 import com.zhongger.zchat.mapper.ContactPersonMapper;
 import com.zhongger.zchat.service.ContactpersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ContactpersonServiceImpl implements ContactpersonService {
@@ -32,5 +35,10 @@ public class ContactpersonServiceImpl implements ContactpersonService {
     @Override
     public Contactperson select(ContactPersonDelete contactPersonDelete) {
         return contactPersonMapper.select(contactPersonDelete);
+    }
+
+    @Override
+    public List<ContactPersonInfo> selectforuserid(Integer user_id) {
+        return contactPersonMapper.selectforuserid(user_id);
     }
 }

@@ -19,4 +19,5 @@ public interface UserMapper extends BaseMapper<Userforleili> {
     Integer update(UserRevise userRevise);
     Userforleili selectAll (String username);
     UserInfoData selectuser (Userforleili userforleili);
+    Integer updateforstaus(Userforleili userforleili);
 }

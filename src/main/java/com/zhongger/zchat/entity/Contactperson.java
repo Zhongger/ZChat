@@ -14,7 +14,7 @@ public class Contactperson {
     private Integer user_id;
     @DateTimeFormat(pattern = "yyyy-MM-dd kk:mm:ss")
     private Date create_date;
-
+    private Integer person_id;
     public Contactperson() {
     }
 

@@ -8,8 +8,10 @@ import com.zhongger.zchat.PO.UserRevise;
 import com.zhongger.zchat.VO.ResrponesUser;
 import com.zhongger.zchat.PO.UserLogin;
 import com.zhongger.zchat.PO.UserRegister;
+import com.zhongger.zchat.entity.UserAvatar;
 import com.zhongger.zchat.entity.Userforleili;
 import com.zhongger.zchat.service.ContactpersonService;
+import com.zhongger.zchat.service.UserAvatarService;
 import com.zhongger.zchat.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,6 +47,8 @@ public class UserController {
     @Autowired
     FileSave fileSave;
     @Autowired
+    UserAvatarService userAvatarService;
+    @Autowired
     StringRedisTemplate stringRedisTemplate;
     @Resource
     ContactpersonService contactpersonService;
@@ -77,6 +81,10 @@ public class UserController {
         int count=UserService.add(userRegister.getUserName(),userRegister.getPassword(),userRegister.getPhone());
 
         if(count==1){
+            //生成头像表数据
+            UserAvatar userAvatar=new UserAvatar();
+            userAvatar.setUser_id(UserService.selectAll(userRegister.getUserName()).getUserId());
+            userAvatarService.insert(userAvatar);
             return new ResrponesUser(200,"注册成功",true);
         }else {
             return new ResrponesUser(500,"未知错误",false);
@@ -111,7 +119,11 @@ public class UserController {
             cookie_username.setPath(request.getContextPath());
             // 向客户端发送cookie
             response.addCookie(cookie_username);
-
+            //将登录状态置1
+            Userforleili userforleili=new Userforleili();
+            userforleili.setUserName(userLogin.getUsername());
+            userforleili.setStaus(1);
+            UserService.updateforstaus(userforleili);
             return new ResrponesUser(200,"登录成功",true);
         }else {
             return  new ResrponesUser(500,"密码错误,登录失败",false);
@@ -123,13 +135,17 @@ public class UserController {
      * 雷立 2021/10/15
      */
     @PostMapping("/deleteuser")
-    public ResrponesUser deletuser(@RequestBody UserDelete userDelete){
+    public ResrponesUser deletuser(@RequestBody UserDelete userDelete, @CookieValue(value = "cookie_username")String usernames){
         String password = UserService.select(userDelete.getUsername());
        if(password!=null&&password.equals(userDelete.getPassword())){
            //先清除联系人表数据
            contactpersonService.deleteforuserid(userDelete.getUsername());
            UserService.delete(userDelete.getUsername());
-
+           stringRedisTemplate.opsForHash().delete("user",userDelete.getUsername());
+            //清除联系人头像表
+           UserAvatar userAvatar=new UserAvatar();
+           userAvatar.setUser_id(UserService.selectAll(usernames).getUserId());
+           userAvatarService.delete(userAvatar);
            return  new ResrponesUser(500,"清除用户成功",true);
        }else{
            return  new ResrponesUser(500,"密码错误,删除失败",false);
@@ -180,6 +196,11 @@ public class UserController {
     public ResrponesUser logout(@CookieValue(value = "cookie_username") String username){
 
         stringRedisTemplate.opsForHash().delete("user",username);
+        //将用户登录状态置0
+        Userforleili userforleili=new Userforleili();
+        userforleili.setUserName(username);
+        userforleili.setStaus(0);
+        UserService.updateforstaus(userforleili);
         return new ResrponesUser(200,"注销成功",true);
     }
     /**

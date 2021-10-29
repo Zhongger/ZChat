@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-@SpringBootTest
+//@SpringBootTest
 class ZChatApplicationTests {
 //	@Autowired
 	private StringRedisTemplate stringRedisTemplate;
@@ -28,13 +28,27 @@ class ZChatApplicationTests {
 //		System.out.println(list1);
 //		System.out.println(Arrays.toString(list.toArray()));
 //	}
+//	@Test
+//	void testredies(){
+//
+//        stringRedisTemplate.opsForValue().set("21","as asdasd");
+//		String result=stringRedisTemplate.opsForValue().get("雷立");
+//		stringRedisTemplate.opsForValue().set("user","");
+//		System.out.println(result);
+//	}
 	@Test
-	void testredies(){
+	void  concurrent(){
+		Thread thread;
+		int a=0;
+		for(int i =0;i<10;i++){
+			thread =new Thread(()->{
 
-        stringRedisTemplate.opsForValue().set("21","as asdasd");
-		String result=stringRedisTemplate.opsForValue().get("雷立");
-		stringRedisTemplate.opsForValue().set("user","");
-		System.out.println(result);
+				for(int z =0;z<9;z++){
+					System.out.print(z);
+				}
+
+			});
+			thread.start();
+		}
 	}
-
 }
