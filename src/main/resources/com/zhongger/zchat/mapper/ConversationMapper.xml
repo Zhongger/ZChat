@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhongger.zchat.mapper.ConversationMapper">
+<insert id="insert" parameterType="com.zhongger.zchat.entity.Conversation">
+    insert into conversation (sender,to_id,conversation_id,create_time) value (#{sender},#{to_id},#{conversation_id},#{create_time})
+</insert>
+    <resultMap id="select" type="com.zhongger.zchat.entity.Conversation">
+        <result column="id" property="id"></result>
+        <result column="sender" property="sender"></result>
+        <result column="to_id" property="to_id"></result>
+        <result column="conversation_id" property="conversation_id"></result>
+        <result column="create_time" property="create_time"></result>
+    </resultMap>
+    <select id="selectforsender" resultMap="select">
+        select sender,to_id,conversation_id,create_time from conversation where sender=#{sender} and to_id=#{to_id}
+    </select>
+    <delete id="deleteforsender" parameterType="Integer">
+        delete from  conversation where sender=#{sender} or to_id=#{sender}
+    </delete>
+</mapper>
