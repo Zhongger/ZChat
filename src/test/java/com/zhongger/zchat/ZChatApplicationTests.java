@@ -1,6 +1,8 @@
 package com.zhongger.zchat;
 
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -11,6 +13,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
+
+import static org.springframework.test.context.transaction.TestTransaction.start;
 
 //@SpringBootTest
 class ZChatApplicationTests {
@@ -36,19 +42,12 @@ class ZChatApplicationTests {
 //		stringRedisTemplate.opsForValue().set("user","");
 //		System.out.println(result);
 //	}
+	static   int a=0;
+	CyclicBarrier cyclicBarrier;
+	Logger logger= LoggerFactory.getLogger(this.getClass());
 	@Test
-	void  concurrent(){
-		Thread thread;
-		int a=0;
-		for(int i =0;i<10;i++){
-			thread =new Thread(()->{
+	static synchronized void test(){};
+	void  concurrent() throws InterruptedException {
 
-				for(int z =0;z<9;z++){
-					System.out.print(z);
-				}
-
-			});
-			thread.start();
-		}
 	}
 }

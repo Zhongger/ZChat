@@ -27,7 +27,7 @@ public class WebConfigurer implements WebMvcConfigurer {
         List<String> irs = new ArrayList<String>();
         irs.add("/login");
         irs.add("/register");
-//        irs.add("/oauth");
+        irs.add("/createConversation");
         ir.excludePathPatterns(irs);
     }
 }

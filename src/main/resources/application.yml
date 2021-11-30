@@ -12,7 +12,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   redis:
     database: 0
-    host: 10.93.38.237
+    host: 10.93.37.3
     port: 6379
     timeout: 50s
   lettuce:
@@ -38,3 +38,7 @@ logging:
       zhongger:
         zchat:
           mapper: debug
+pagehelper:
+  reasonable: true
+  support-methods-arguments: true
+  params: count

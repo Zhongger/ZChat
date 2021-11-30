@@ -12,6 +12,7 @@ import com.zhongger.zchat.entity.Userforleili;
 import com.zhongger.zchat.service.ContactpersonService;
 import com.zhongger.zchat.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
+@PropertySource("classpath:commonconfiguration/regular.properties")
 public class ContactPersonController {
     @Resource
     com.zhongger.zchat.service.UserService UserService;
@@ -68,7 +70,7 @@ public class ContactPersonController {
 
         contactperson.setCreate_date(new Date());
         contactpersonService.insert(contactperson);
-
+        System.out.println(contactperson);
         return  new ResrponesUser(200,"添加成功",true);
     }
 
