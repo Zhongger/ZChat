@@ -1,5 +1,6 @@
 package com.zhongger.zchat;
 
+import com.zhongger.zchat.nitty.NettyClient;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,10 +10,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
@@ -42,12 +40,30 @@ class ZChatApplicationTests {
 //		stringRedisTemplate.opsForValue().set("user","");
 //		System.out.println(result);
 //	}
-	static   int a=0;
-	CyclicBarrier cyclicBarrier;
-	Logger logger= LoggerFactory.getLogger(this.getClass());
-	@Test
-	static synchronized void test(){};
-	void  concurrent() throws InterruptedException {
+//	static   int a=0;
+//	CyclicBarrier cyclicBarrier;
+//	Logger logger= LoggerFactory.getLogger(this.getClass());
+//	@Test
+//	static synchronized void test(){};
+//	void  concurrent() throws InterruptedException {
+//		LinkedList list=new LinkedList();
+//		HashMap<Object,Object>s=new HashMap<>();
+//		list.get(2);
+//		list.add()
+//
+//	}
 
+	NettyClient nettyClient=new NettyClient();
+	public static void main(String[] args) throws Exception{
+		NettyClient nettyClient=new NettyClient();
+		nettyClient.stray();
+	}
+
+	void client() throws Exception {
+		nettyClient.stray();
+	}
+	@Test
+	void client1() throws Exception {
+		nettyClient.stray();;
 	}
 }

@@ -1,5 +1,6 @@
 package com.zhongger.zchat;
 
+import com.zhongger.zchat.nitty.NettyClient;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,5 +23,9 @@ public class Thread_B implements Runnable{
         if(countDownLatch!=null){
             countDownLatch.countDown();
         }
+    }
+    public static void main(String[] args) throws Exception{
+        NettyClient nettyClient=new NettyClient();
+        nettyClient.stray();
     }
 }

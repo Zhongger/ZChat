@@ -28,6 +28,7 @@ public class WebConfigurer implements WebMvcConfigurer {
         irs.add("/login");
         irs.add("/register");
         irs.add("/createConversation");
+        irs.add("/mq");
         ir.excludePathPatterns(irs);
     }
 }
