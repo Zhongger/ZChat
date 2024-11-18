@@ -34,18 +34,17 @@ public class UserController {
     @GetMapping("/batchAddUserTest")
     public String batchAddUserTest() {
         List<User> userList = new ArrayList<>();
-        User user1 = new User();
-        user1.setUsername("ZMY");
-        user1.setPassword("123456");
-
-        User user2 = new User();
-        user2.setUsername("LL");
-        user2.setPassword("12345678");
-
-        userList.add(user1);
-        userList.add(user2);
-
+        addUserToList(userList, "ZMY", "123456");
+        addUserToList(userList, "LL", "12345678");
+    
         int batchInsertUser = userService.batchInsertUser(userList);
         return "success insert " + batchInsertUser;
+    }
+    
+    private void addUserToList(List<User> userList, String username, String password) {
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(password);
+        userList.add(user);
     }
 }
